@@ -160,12 +160,84 @@ input{font-family:var(--font-main);}
 .learn-morse-txt{font-family:var(--font-mono);font-size:1.1rem;color:var(--muted-hi);letter-spacing:8px;}
 .learn-mnemonic{font-size:.8rem;font-weight:700;color:var(--muted);text-align:center;
   background:rgba(255,255,255,.04);border-radius:var(--r-sm);padding:6px 10px;}
-.learn-morse-dots{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:20px;}
+.learn-morse-dots{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:24px;}
 .learn-controls{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;}
-.learn-plays-left{font-size:.88rem;font-weight:700;color:var(--muted-hi);text-align:center;}
+.learn-plays-left{font-size:.9rem;font-weight:800;color:var(--teal);text-align:center;}
 .learn-tap-hint{font-size:.8rem;color:var(--muted);text-align:center;display:none;}
 .learn-tip{font-size:.8rem;color:var(--muted);text-align:center;
   background:var(--bg-panel);border-radius:var(--r-sm);padding:10px 14px;width:100%;}
+
+/* ─── LEARN: SOUND-WORD SYLLABLE SYNC ────────
+   The CORE pedagogical moment: syllable blocks
+   pulse IN SYNC with each dot/dash sound.
+   DAH = tall warm orange block
+   DI  = small cool teal block
+─────────────────────────────────────────────*/
+.learn-sound-word{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  background:rgba(255,228,79,.05);border:1px solid rgba(255,228,79,.22);
+  border-radius:var(--r-md);padding:12px 14px;width:100%;
+}
+.sound-word-label{
+  font-size:.62rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+  color:var(--yellow);
+}
+.sound-word-syllables{
+  display:flex;gap:7px;align-items:flex-end;justify-content:center;flex-wrap:wrap;
+  min-height:50px;/* reserve space so layout doesn't jump */
+}
+.syl-block.syl-dah{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:48px;height:48px;padding:0 6px;
+  background:rgba(255,124,42,.13);border:2px solid rgba(255,124,42,.3);
+  border-radius:var(--r-sm);
+  font-family:var(--font-main);font-size:1rem;font-weight:900;
+  color:var(--orange);transition:all .07s ease;white-space:nowrap;
+}
+.syl-block.syl-di{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:34px;height:32px;padding:0 5px;
+  background:rgba(0,223,196,.08);border:2px solid rgba(0,223,196,.2);
+  border-radius:var(--r-xs);
+  font-family:var(--font-main);font-size:.78rem;font-weight:800;
+  color:var(--teal);transition:all .07s ease;white-space:nowrap;
+}
+/* ACTIVE: the syllable PULSES when that sound plays */
+.syl-block.syl-active.syl-dah{
+  background:rgba(255,124,42,.5);border-color:var(--orange);
+  color:var(--yellow);
+  transform:scale(1.35) translateY(-8px);
+  box-shadow:0 0 22px rgba(255,124,42,.65);
+  font-size:1.1rem;
+}
+.syl-block.syl-active.syl-di{
+  background:rgba(0,223,196,.38);border-color:var(--teal);
+  color:var(--white);
+  transform:scale(1.25) translateY(-5px);
+  box-shadow:0 0 16px rgba(0,223,196,.55);
+}
+.syl-block.syl-done{ opacity:.38; transform:none; box-shadow:none; }
+.sound-word-hint{
+  font-size:.72rem;font-weight:700;color:var(--muted-hi);
+  text-align:center;font-style:italic;
+}
+
+/* Learn letter block: highlight which one is playing */
+.learn-letter-block{ transition:border-color .2s,box-shadow .2s,transform .2s; }
+.learn-letter-block.llb-playing{
+  border-color:rgba(0,223,196,.55)!important;
+  box-shadow:0 0 28px rgba(0,223,196,.2);
+  transform:scale(1.02);
+}
+
+/* ─── GAME: MNEMONIC HINT ────────────────────
+   Appears after morse plays; bridge sound→word
+─────────────────────────────────────────────*/
+#g-mnemonic-hint{
+  font-size:.82rem;font-weight:800;color:var(--yellow);text-align:center;
+  opacity:0;transition:opacity .5s ease;min-height:24px;
+  font-style:italic;letter-spacing:.3px;
+}
 
 /* ════════════════ LEVEL SELECT ════════════════ */
 .levels-intro{width:100%;background:linear-gradient(135deg,rgba(0,223,196,.08),rgba(144,102,248,.06));
