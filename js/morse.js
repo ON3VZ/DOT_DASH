@@ -22,26 +22,46 @@ function morseToDisplay(s) {
 }
 function letterToMorseDisplay(l) { return morseToDisplay(MORSE_TABLE[l]||''); }
 
-/* ─── MNEMONICS ───────────────────────────────── */
-const MNEMONICS = {
-  K:'Koffie: DAH·di·DAH',  M:'Mama: DAH·DAH',
-  U:'U-boot: di·di·DAH',   R:'Radio: di·DAH·di',
-  E:'Eén tikje: di',        S:'SOS: di·di·di',
-  N:'Nee: DAH·di',          A:'Alfa: di·DAH',
-  P:'Papa: di·DAH·DAH·di', T:'Tik: DAH',
-  L:'Lima: di·DAH·di·di',   W:'Whisky: di·DAH·DAH',
-  I:'Insect: di·di',        J:'Juliet: di·DAH·DAH·DAH',
-  Z:'Zebra: DAH·DAH·di·di', F:'Foxtrot: di·di·DAH·di',
-  O:'Ooo: DAH·DAH·DAH',    Y:'Yankee: DAH·di·DAH·DAH',
-  G:'Golf: DAH·DAH·di',    Q:'Quebec: DAH·DAH·di·DAH',
-  V:'Victor: di·di·di·DAH', C:'Charlie: DAH·di·DAH·di',
-  H:'Hotel: di·di·di·di',  B:'Bravo: DAH·di·di·di',
-  D:'Delta: DAH·di·di',    X:'X-ray: DAH·di·di·DAH',
-  '1':'1 = .----', '2':'2 = ..---', '3':'3 = ...--',
-  '4':'4 = ....-', '5':'5 = .....', '6':'6 = -....',
-  '7':'7 = --...', '8':'8 = ---..', '9':'9 = ----.',
-  '0':'0 = -----',
+/* ─── MNEMONIC DATA ────────────────────────────
+   Each entry: { word, syllables[], hint }
+   syllables[] maps 1-to-1 to the morse symbols.
+   DAH syllable = long/stressed, DI syllable = short/unstressed.
+   The word's RHYTHM matches the morse sound — that's the magic!
+─────────────────────────────────────────────── */
+const MNEMONIC_DATA = {
+  K: { word:'Koffie',    syllables:['KOF','fi','e'],     hint:'Lang-kort-lang, zoals KOF·fi·e!' },
+  M: { word:'Mama',      syllables:['MA','ma'],           hint:'Twee lange klanken: MA·ma' },
+  U: { word:'U-boot',    syllables:['u','boot','uit'],    hint:'Kort-kort-lang: u·boot·UIT!' },
+  R: { word:'Radio',     syllables:['ra','DI','o'],       hint:'Kort-lang-kort: ra·DI·o' },
+  E: { word:'Eén',       syllables:['E'],                 hint:'Eén enkel tikje — zo simpel!' },
+  S: { word:'Sinaas',    syllables:['si','na','as'],      hint:'Drie korte tikjes: si·na·as' },
+  N: { word:'Negen',     syllables:['NEE','gen'],         hint:'Lang-kort: NEE·gen' },
+  A: { word:'A-ha',      syllables:['a','HA'],            hint:'Kort-lang: a·HA!' },
+  P: { word:'Papaver',   syllables:['pa','PA','pa','ver'], hint:'Kort-lang-lang-kort: pa·PA·PA·ver' },
+  T: { word:'Tik',       syllables:['TIK'],               hint:'Eén lange tik: TIIIK' },
+  L: { word:'Lellebel',  syllables:['le','LLE','le','bel'], hint:'Kort-lang-kort-kort: le·LLE·le·bel' },
+  W: { word:'Wow',       syllables:['wow','WOW','WOW'],   hint:'Kort-lang-lang: wow·WOW·WOW' },
+  I: { word:'Tiktak',    syllables:['tik','tak'],         hint:'Twee korte: tik·tak' },
+  J: { word:'Ja!',       syllables:['ja','JA','JA','JA'], hint:'Kort-lang-lang-lang!' },
+  Z: { word:'Zeezout',   syllables:['ZEE','ZOUT','ze','ut'], hint:'Lang-lang-kort-kort' },
+  F: { word:'Fietsbel',  syllables:['fie','ts','BEL','el'], hint:'Kort-kort-lang-kort' },
+  O: { word:'Ooooh!',    syllables:['OOO','OOO','OOH'],  hint:'Drie lange klanken: OOOOH!' },
+  Y: { word:'Yippee',    syllables:['YIP','i','PEE','ee'], hint:'Lang-kort-lang-lang' },
+  G: { word:'Goeiedag',  syllables:['GOE','IE','dag'],    hint:'Lang-lang-kort' },
+  Q: { word:'Quebec',    syllables:['QUE','BEC','be','c'], hint:'Lang-lang-kort-lang' },
+  V: { word:'Victory',   syllables:['vic','to','ri','RY'], hint:'Kort-kort-kort-lang (Beethoven!)' },
+  C: { word:'Chocola',   syllables:['CHOC','o','LA','da'], hint:'Lang-kort-lang-kort: CHOC·o·LA·da' },
+  H: { word:'Hahaha',    syllables:['ha','ha','ha','ha'], hint:'Vier korte tikjes: ha·ha·ha·ha' },
+  B: { word:'Batman',    syllables:['BAT','man','n','n'], hint:'Lang-kort-kort-kort: BATman' },
+  D: { word:'Dakpan',    syllables:['DAK','pan','n'],     hint:'Lang-kort-kort: DAKpan' },
+  X: { word:'Xylofoon',  syllables:['XY','lo','foo','n'], hint:'Lang-kort-kort-lang' },
 };
+
+// Backward-compat: simple string for legacy use
+const MNEMONICS = {};
+Object.entries(MNEMONIC_DATA).forEach(([l,d])=>{
+  MNEMONICS[l] = d.word + ' — ' + d.hint;
+});
 
 /* ─── FUN MESSAGES ────────────────────────────── */
 const CORRECT_MSGS = [
@@ -173,8 +193,13 @@ function buildLevels() {
       });
     }
 
-    // D) MASTER — real mix, all letters fairly (10Q, 25% focus) — from step 4+
+    // D) MASTER — every known letter guaranteed at least once, longer session
+    // questionsCount scales with alphabet: enough room for full coverage + focus
     if (stepIdx >= 4) {
+      const knownCount = knownMin2.length;
+      // At minimum: enough questions to cover every letter once + a few extra
+      // E.g. 5 letters known → 12Q, 10 letters → 18Q, 20 letters → 26Q
+      const masterQ = Math.max(12, Math.min(knownCount + 8, 30));
       push({
         type: 'master',
         group: 'alphabet',
@@ -182,14 +207,14 @@ function buildLevels() {
         focusLetter: letter,
         newLetter: null,
         introLetters: null,
-        questionsCount: 10,
-        focusWeight: 0.25,
+        questionsCount: masterQ,
+        focusWeight: 0.22,
         minScore: 75,
         streamOk: true,
         sendOk: true,
         rank,
         name: `Meester-oefening ${letter}`,
-        desc: `Pure mix — alle ${knownMin2.length} letters!`,
+        desc: `Alle ${knownMin2.length} letters gegarandeerd!`,
       });
     }
   });

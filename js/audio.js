@@ -70,23 +70,48 @@ const MorseAudio = (() => {
     return {osc,gain};
   }
 
+  // SUCCESS: bright xylophone-style "ding-ding-ding!" — unmistakably happy
   function playSuccess() {
     const ac=ensure();
-    [523.25,659.25,783.99].forEach((f,i)=>{
-      const o=ac.createOscillator(),g=ac.createGain();
-      o.connect(g);g.connect(ac.destination);o.type='sine';o.frequency.value=f;
-      const t0=ac.currentTime+i*0.085;
-      g.gain.setTargetAtTime(0.30,t0,0.006); g.gain.setTargetAtTime(0,t0+0.18,0.025);
-      o.start();o.stop(t0+0.4);
+    // Rising major triad with xylophone-like sharp attack and warm decay
+    // E5-G5-B5 (clearer "correct!" feel than C-E-G)
+    const notes = [659.25, 783.99, 987.77];
+    notes.forEach((f,i)=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type='sine'; o.frequency.value=f;
+      const t0=ac.currentTime+i*0.10;
+      // Sharp attack (xylophone feel)
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.38, t0+0.012);
+      g.gain.setTargetAtTime(0, t0+0.04, 0.06);
+      o.start(t0); o.stop(t0+0.5);
+
+      // Subtle overtone for warmth
+      const o2=ac.createOscillator(), g2=ac.createGain();
+      o2.connect(g2); g2.connect(ac.destination);
+      o2.type='triangle'; o2.frequency.value=f*2;
+      g2.gain.setValueAtTime(0, t0);
+      g2.gain.linearRampToValueAtTime(0.10, t0+0.01);
+      g2.gain.setTargetAtTime(0, t0+0.02, 0.04);
+      o2.start(t0); o2.stop(t0+0.3);
     });
   }
 
+  // FAIL: soft "whoops" — friendly, not punishing, NOT like a buzzer
   function playFail() {
-    const ac=ensure(),o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);o.type='sawtooth';o.frequency.value=200;
-    g.gain.setTargetAtTime(0.10,ac.currentTime,0.006);
-    g.gain.setTargetAtTime(0,ac.currentTime+0.22,0.025);
-    o.start();o.stop(ac.currentTime+0.4);
+    const ac=ensure();
+    // Gentle descending two-tone — like a soft tuba "wah-wah"
+    [[380,0],[280,0.12]].forEach(([freq,delay])=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type='sine'; o.frequency.value=freq;
+      const t0=ac.currentTime+delay;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.13, t0+0.02);
+      g.gain.setTargetAtTime(0, t0+0.10, 0.08);
+      o.start(t0); o.stop(t0+0.4);
+    });
   }
 
   function playUnlock() {

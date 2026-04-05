@@ -77,32 +77,72 @@ function startLevel(levelNum) {
 
 /* ─── QUESTION GENERATION ─────────────────── */
 function generateQuestions(def) {
-  const letters = def.letters;
-  const focus   = def.focusLetter;
-  const count   = def.questionsCount;
-  const weight  = def.focusWeight;
-  const out     = [];
+  const allLetters = def.letters;
+  const focus      = def.focusLetter;
+  const count      = def.questionsCount;
+  const weight     = def.focusWeight;
+  const isMaster   = def.type === 'master';
 
-  // Guarantee: focus letter appears at least Math.ceil(count*weight*0.7) times
-  const minFocus = Math.max(1, Math.ceil(count * weight * 0.7));
-  for(let i=0; i<minFocus; i++) out.push(focus);
+  // Always have at least 2 DIFFERENT letters available
+  const activeLetters = allLetters.length >= 2
+    ? allLetters
+    : [...allLetters, ...KOCH_SEQUENCE.slice(0, 2)].filter((v,i,a) => a.indexOf(v) === i);
 
-  // Fill rest randomly from all known letters
-  while(out.length < count) {
-    const useFocus = letters.length<=1 || Math.random()<weight;
-    out.push(useFocus ? focus : letters[Math.floor(Math.random()*letters.length)]);
+  const out = [];
+
+  if (isMaster) {
+    // ── MASTER: every known letter appears at least once ──────────────────
+    // 1) One guaranteed appearance for EVERY known letter (broad review)
+    const shuffledAll = [...activeLetters].sort(() => Math.random() - 0.5);
+    shuffledAll.forEach(l => out.push(l));
+
+    // 2) Extra focus-letter appearances on top (≈22% of total)
+    const extraFocus = Math.max(1, Math.round(count * weight) - 1);
+    for (let i = 0; i < extraFocus; i++) out.push(focus);
+
+    // 3) Fill remaining slots with weighted random (focus slightly preferred)
+    while (out.length < count) {
+      const useFocus = Math.random() < weight * 0.5;
+      const pool     = useFocus ? [focus] : activeLetters;
+      out.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
+
+    // 4) Trim to exact count if over (can happen when many letters known)
+    while (out.length > count) out.pop();
+
+  } else {
+    // ── ALL OTHER TYPES: weighted random with minimum focus guarantee ─────
+    const minFocus = Math.max(2, Math.round(count * weight * 0.75));
+    for (let i = 0; i < minFocus; i++) out.push(focus);
+
+    const others = activeLetters.filter(l => l !== focus);
+    while (out.length < count) {
+      const useFocus = others.length === 0 || Math.random() < weight * 0.6;
+      const pool     = useFocus ? [focus] : others;
+      out.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
   }
 
-  // Shuffle but ensure first question is NOT the focus (keeps it unpredictable)
-  for(let i=out.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [out[i],out[j]]=[out[j],out[i]];
+  // ── SHUFFLE — break up runs of 3+ same letter ────────────────────────
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  for (let i = 2; i < out.length; i++) {
+    if (out[i] === out[i-1] && out[i] === out[i-2]) {
+      for (let j = i + 1; j < out.length; j++) {
+        if (out[j] !== out[i]) { [out[i], out[j]] = [out[j], out[i]]; break; }
+      }
+    }
   }
   return out;
 }
 
 /* ════════════════════════════════════════════
    LEARN PHASE (INTRO levels)
+   — Auto-plays each letter N times
+   — Syllables of the mnemonic word PULSE in sync with each dot/dash
+   — Child sees AND hears the rhythm connection
 ════════════════════════════════════════════ */
 function startLearnPhase() {
   const def = Game.levelDef;
@@ -114,67 +154,113 @@ function startLearnPhase() {
 
   showScreen('screen-learn');
 
-  // Show all intro letters
-  const lettersHTML = introLetters.map(l => `
-    <div class="learn-letter-block">
-      <div class="learn-big-letter">${l}</div>
-      <div class="learn-morse-txt">${letterToMorseDisplay(l)}</div>
-      <div class="learn-mnemonic">${MNEMONICS[l]||''}</div>
-      <div class="learn-morse-dots" id="lmd-${l}"></div>
-    </div>
-  `).join('');
+  // Build learn blocks with syllable display for each letter
+  const lettersHTML = introLetters.map(l => {
+    const mn    = MNEMONIC_DATA[l] || null;
+    const morse = MORSE_TABLE[l] || '';
+
+    // Build syllable spans — one per morse symbol
+    let sylHTML = '';
+    if (mn && mn.syllables.length > 0) {
+      // Map syllables to morse symbols (1:1 if lengths match, else distribute)
+      const syls = mn.syllables;
+      const symCount = morse.length;
+      // Show each syllable as a block; length mismatch handled gracefully
+      sylHTML = syls.map((s, si) => {
+        const isDah = morse[si] === '-';
+        return `<span class="syl-block ${isDah?'syl-dah':'syl-di'}" id="syl-${l}-${si}">${s}</span>`;
+      }).join('');
+    }
+
+    return `
+      <div class="learn-letter-block" id="llb-${l}">
+        <div class="learn-big-letter">${l}</div>
+        <div class="learn-morse-txt">${letterToMorseDisplay(l)}</div>
+        ${mn ? `
+          <div class="learn-sound-word">
+            <div class="sound-word-label">🔊 Zeg hardop mee:</div>
+            <div class="sound-word-syllables" id="syl-row-${l}">${sylHTML}</div>
+            <div class="sound-word-hint">${mn.hint}</div>
+          </div>
+        ` : ''}
+        <div class="learn-morse-dots" id="lmd-${l}"></div>
+      </div>
+    `;
+  }).join('');
 
   $('learn-letters').innerHTML = lettersHTML;
   $('learn-level-name').textContent = def.name;
-  $('learn-plays-left').textContent = `Luister ${LEARN_REPEATS}× — dan ben je klaar!`;
+  $('learn-plays-left').textContent = `🎵 Luister ${LEARN_REPEATS}× en zeg het mee!`;
   $('learn-start-btn').style.display = 'none';
-  $('learn-tap-hint').style.display = introLetters.length===1 ? 'block':'none';
 
-  // Build morse visuals for each letter
-  introLetters.forEach(l => {
-    buildMorseVisual('lmd-'+l, MORSE_TABLE[l]||'');
-  });
+  // Build morse dot/dash visuals
+  introLetters.forEach(l => buildMorseVisual('lmd-'+l, MORSE_TABLE[l]||''));
 
-  // Auto-play after short delay
-  setTimeout(() => learnAutoPlay(introLetters, 0), 600);
+  setTimeout(() => learnAutoPlay(introLetters, 0), 700);
 }
 
 function learnAutoPlay(letters, repeatNum) {
   if(repeatNum >= LEARN_REPEATS) {
-    // All done — enable start button
     $('learn-plays-left').textContent = '✅ Goed geluisterd! Je kan beginnen.';
     $('learn-start-btn').style.display = 'block';
     Game.learn.ready = true;
     return;
   }
 
-  $('learn-plays-left').textContent = `🎵 Luisterbeurt ${repeatNum+1} van ${LEARN_REPEATS}...`;
+  const msgs = [
+    `🎵 Luisteren… en zeg het hardop mee!`,
+    `🎵 Nog een keer — voel het ritme!`,
+    `🎵 Laatste keer — jij hebt dit!`,
+  ];
+  $('learn-plays-left').textContent = msgs[repeatNum] || `🎵 Herhaling ${repeatNum+1}…`;
 
   const { charWpm, effWpm } = getLevelWpm(Game.levelNum);
 
-  // Play each intro letter in sequence
   let idx = 0;
   function playNext() {
     if(idx >= letters.length) {
       Game.learn.playsDone++;
-      setTimeout(() => learnAutoPlay(letters, repeatNum+1), 800);
+      setTimeout(() => learnAutoPlay(letters, repeatNum+1), 900);
       return;
     }
     const letter = letters[idx];
-    const dots   = qsa('#lmd-'+letter+' .morse-sym');
+
+    // Reset morse dot visuals
+    const dots = qsa('#lmd-'+letter+' .morse-sym');
     dots.forEach(d => d.classList.remove('active','played'));
+
+    // Reset syllable visuals
+    const syls = qsa(`#syl-row-${letter} .syl-block`);
+    syls.forEach(s => s.classList.remove('syl-active','syl-done'));
+
+    // Highlight the letter block currently playing
+    qsa('.learn-letter-block').forEach(b => b.classList.remove('llb-playing'));
+    const block = document.getElementById('llb-'+letter);
+    if(block) block.classList.add('llb-playing');
 
     MorseAudio.playLetter(letter, charWpm, effWpm,
       (si) => {
+        // Animate morse dots
         dots.forEach((d,i)=>{
           if(i<si){d.classList.remove('active');d.classList.add('played');}
           if(i===si){d.classList.add('active');d.classList.remove('played');}
         });
+        // Animate syllable — pulse the matching syllable block
+        syls.forEach((s,i) => {
+          s.classList.remove('syl-active');
+          if(i<si) s.classList.add('syl-done');
+          if(i===si) {
+            s.classList.remove('syl-done');
+            s.classList.add('syl-active');
+          }
+        });
       },
       () => {
         dots.forEach(d=>{d.classList.remove('active');d.classList.add('played');});
+        syls.forEach(s=>{s.classList.remove('syl-active');s.classList.add('syl-done');});
+        if(block) block.classList.remove('llb-playing');
         idx++;
-        setTimeout(playNext, 500);
+        setTimeout(playNext, 600);
       }
     );
   }
@@ -274,8 +360,10 @@ function loadDecodeQ() {
   buildChoices();
   $('btn-play').classList.remove('playing');
   $('play-icon').classList.remove('spinning');
-  // Hide feedback bar
   $('g-feedback-bar').style.opacity='0';
+  // Hide mnemonic hint until after morse plays
+  const hintEl = $('g-mnemonic-hint');
+  if(hintEl) { hintEl.style.opacity='0'; hintEl.textContent=''; }
   setTimeout(()=>{ if(!Game.isPlaying) playCurrentMorse(); }, 300);
 }
 
@@ -339,7 +427,16 @@ function playCurrentMorse() {
       Game.isPlaying=false;
       $('btn-play').classList.remove('playing');
       $('play-icon').classList.remove('spinning');
-      Game.answerStart=Date.now(); // start timing after morse plays
+      Game.answerStart=Date.now();
+
+      // Show mnemonic hint AFTER morse plays — connects sound to word
+      const mn = MNEMONIC_DATA[Game.curLetter];
+      const hintEl = $('g-mnemonic-hint');
+      if(hintEl && mn && Game.levelNum <= 12) {
+        // Show for early levels; fade in gently
+        hintEl.textContent = `💡 Denk aan: "${mn.word}"`;
+        hintEl.style.opacity='1';
+      }
     }
   );
 }
