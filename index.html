@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#060b1c">
+  <meta name="description" content="DOT & DASH — Leer morsecode via het Koch-methode. Een spionage-game voor kinderen.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="DOT &amp; DASH">
+  <title>DOT &amp; DASH — Leer de Taal van Spionnen</title>
+
+  <!-- Google Fonts — Nunito (friendly) + Space Mono (morse display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ─── STARFIELD ──────────────────────── -->
+<div id="starfield" aria-hidden="true"></div>
+
+<!-- ─── TOAST ─────────────────────────── -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ─── FEEDBACK OVERLAY ──────────────── -->
+<div class="feedback-overlay" id="feedback-overlay" aria-hidden="true">
+  <div class="feedback-burst" id="feedback-burst"></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN: ONBOARDING
+════════════════════════════════════ -->
+<section class="screen" id="screen-onboard" aria-label="Welkom">
+
+  <!-- Step 0: Welcome -->
+  <div class="ob-step active" id="ob-0">
+    <div class="ob-big">🕵️</div>
+    <h1 class="ob-title">Welkom, Agent!</h1>
+    <p class="ob-body">
+      Jij staat op het punt de <strong style="color:var(--teal)">geheimste taal ter wereld</strong> te leren.
+      Spionnen, zeehelden en astronauten gebruiken hem.<br>
+      Klaar voor je eerste missie?
+    </p>
+    <div class="ob-dots">
+      <div class="ob-dot active"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+    </div>
+    <button class="btn-primary" onclick="nextOnboard()">Ik ben klaar! →</button>
+  </div>
+
+  <!-- Step 1: DOT & DASH explained -->
+  <div class="ob-step" id="ob-1">
+    <div class="ob-big">· —</div>
+    <h2 class="ob-title">DOT &amp; DASH</h2>
+    <p class="ob-body">
+      Morse bestaat uit maar <strong style="color:var(--teal)">twee dingen</strong>:
+      stippen en strepen. Elke letter is een unieke combinatie. Simpel!
+    </p>
+    <div class="ob-demo">
+      <div class="ob-demo-item">
+        <div class="ob-demo-sym" style="color:var(--teal)">·</div>
+        <div class="ob-demo-desc">Kort tikje = DOT</div>
+      </div>
+      <div class="ob-sep">vs</div>
+      <div class="ob-demo-item">
+        <div class="ob-demo-sym" style="color:var(--orange)">—</div>
+        <div class="ob-demo-desc">Lang houden = DASH</div>
+      </div>
+    </div>
+    <div class="ob-dots">
+      <div class="ob-dot"></div>
+      <div class="ob-dot active"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+    </div>
+    <button class="btn-primary" onclick="nextOnboard()">Begrepen! →</button>
+  </div>
+
+  <!-- Step 2: Modes -->
+  <div class="ob-step" id="ob-2">
+    <div class="ob-big">👂📡⚡</div>
+    <h2 class="ob-title">Drie Missietypes</h2>
+    <p class="ob-body">
+      <strong style="color:var(--teal)">LUISTER</strong> — Hoor morse en kies de juiste letter.<br>
+      <strong style="color:var(--orange)">STUUR</strong> — Zie een letter en tik het zelf.<br>
+      <strong style="color:var(--purple)">STREAM</strong> — Vijf letters achter elkaar in real-time!
+      <br><br>Stream unlock je na een goed level. 🎯
+    </p>
+    <div class="ob-dots">
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot active"></div>
+      <div class="ob-dot"></div>
+    </div>
+    <button class="btn-primary" onclick="nextOnboard()">Oké! →</button>
+  </div>
+
+  <!-- Step 3: Name -->
+  <div class="ob-step" id="ob-3">
+    <div class="ob-big">🔑</div>
+    <h2 class="ob-title">Jouw codenaam</h2>
+    <p class="ob-body">Elke agent heeft een geheime naam. Wat is die van jou?</p>
+    <input type="text" class="name-input" id="agent-name-input"
+      placeholder="Bijv: Vosje, Storm, Rex…"
+      maxlength="14" autocomplete="off" spellcheck="false">
+    <div class="ob-dots">
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot active"></div>
+    </div>
+    <button class="btn-primary" onclick="finishOnboard()">Missie starten! 🚀</button>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: HOME
+════════════════════════════════════ -->
+<section class="screen active" id="screen-home" aria-label="Home">
+
+  <div class="logo-area">
+    <div class="logo-morse" aria-hidden="true">· — &nbsp;&nbsp; · · · &nbsp;&nbsp; — — — &nbsp;&nbsp; · &nbsp;&nbsp; · — — —</div>
+    <h1 class="logo-title">DOT &amp; DASH</h1>
+    <div class="logo-sub">Leer de taal van spionnen</div>
+  </div>
+
+  <!-- Characters: DOT & DASH SVG -->
+  <div class="characters-row" aria-hidden="true">
+
+    <div class="char-wrap">
+      <div class="char-label">DOT</div>
+      <svg class="char-svg char-dot-anim" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="45" cy="45" r="37" fill="#00dfc4" opacity="0.13"/>
+        <circle cx="45" cy="45" r="31" fill="#00dfc4"/>
+        <!-- Eyes -->
+        <ellipse cx="35" cy="41" rx="5" ry="6.5" fill="#060b1c"/>
+        <ellipse cx="55" cy="41" rx="5" ry="6.5" fill="#060b1c"/>
+        <circle cx="37" cy="39" r="2.2" fill="white"/>
+        <circle cx="57" cy="39" r="2.2" fill="white"/>
+        <!-- Smile -->
+        <path d="M35 56 Q45 64 55 56" stroke="#060b1c" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <!-- Antenna -->
+        <line x1="45" y1="14" x2="45" y2="4" stroke="#00dfc4" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="45" cy="3" r="3.5" fill="#ffe44f"/>
+        <!-- Cheeks -->
+        <circle cx="28" cy="50" r="5" fill="#00b89a" opacity="0.4"/>
+        <circle cx="62" cy="50" r="5" fill="#00b89a" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <div class="char-sep">&amp;</div>
+
+    <div class="char-wrap">
+      <div class="char-label">DASH</div>
+      <svg class="char-svg char-dash-anim" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body (rectangular = dash) -->
+        <rect x="8" y="26" width="74" height="44" rx="14" fill="#ff7c2a" opacity="0.13"/>
+        <rect x="12" y="29" width="66" height="38" rx="12" fill="#ff7c2a"/>
+        <!-- Sunglasses -->
+        <rect x="17" y="38" width="24" height="16" rx="6" fill="#060b1c"/>
+        <rect x="49" y="38" width="24" height="16" rx="6" fill="#060b1c"/>
+        <line x1="41" y1="46" x2="49" y2="46" stroke="#060b1c" stroke-width="3"/>
+        <!-- Lens glint -->
+        <circle cx="24" cy="44" r="3" fill="white" opacity="0.35"/>
+        <circle cx="56" cy="44" r="3" fill="white" opacity="0.35"/>
+        <!-- Smile -->
+        <path d="M29 58 Q45 67 61 58" stroke="#060b1c" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <!-- Ears / side nubs -->
+        <rect x="3"  y="36" width="9" height="8" rx="3" fill="#ff7c2a"/>
+        <rect x="78" y="36" width="9" height="8" rx="3" fill="#ff7c2a"/>
+      </svg>
+    </div>
+
+  </div>
+
+  <p class="tagline">"Word de Agent die niemand verwacht." 🕵️</p>
+
+  <div class="stats-strip" id="home-stats">
+    <div class="stat-pill">
+      <span class="icon">👤</span>
+      <span id="home-agent-name">Agent</span>
+    </div>
+    <div class="stat-pill">
+      <span class="icon">⭐</span>
+      Level <span class="val" id="stat-level">1</span>
+    </div>
+    <div class="stat-pill">
+      <span class="icon">🔤</span>
+      <span class="val" id="stat-letters">2</span> letters
+    </div>
+    <div class="stat-pill">
+      <span class="icon">🔥</span>
+      <span class="val" id="stat-streak">0</span> dag streak
+    </div>
+  </div>
+
+  <div class="home-actions">
+    <button class="btn-primary" onclick="showScreen('screen-levels')">▶ Missies starten</button>
+    <button class="btn-secondary" onclick="showScreen('screen-profile')">📋 Mijn Agent-dossier</button>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: LEVEL SELECT
+════════════════════════════════════ -->
+<section class="screen" id="screen-levels" aria-label="Missie Kaart">
+
+  <div class="screen-header">
+    <button class="btn-back" onclick="showScreen('screen-home')" aria-label="Terug">←</button>
+    <h2 class="screen-title">🗺️ Missie Kaart</h2>
+  </div>
+
+  <div class="levels-intro">
+    <strong>Koch-methode:</strong> Één letter per keer, altijd op de juiste snelheid.
+    Score ≥ 70% om te ontgrendelen. Hogere levels kun je ook manueel selecteren.
+    Paars ⚡ STREAM-knop = reeks van 5 letters in real-time kopiëren!
+  </div>
+
+  <div id="levels-container" style="width:100%; display:flex; flex-direction:column; gap:0;"></div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: GAME
+════════════════════════════════════ -->
+<section class="screen" id="screen-game" aria-label="Missie">
+
+  <!-- Topbar -->
+  <div class="game-topbar">
+    <button class="btn-back" onclick="exitGame()" aria-label="Missie verlaten">←</button>
+    <div class="game-level-badge" id="g-level-badge">LEVEL 1</div>
+    <div class="game-mission-type" id="g-mission-type">👂 LUISTER</div>
+    <div class="game-score" aria-live="polite">
+      <span id="g-correct">0</span>/<span id="g-total">10</span>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar" id="g-progress" style="width:0%"></div>
+  </div>
+
+  <!-- ─── DECODE MODE ─── -->
+  <div id="mode-decode">
+
+    <div class="char-stage">
+      <div class="stage-instruction">Welke letter hoor je?</div>
+      <div class="morse-display" id="g-morse-visual" aria-hidden="true"></div>
+      <button class="btn-play-morse" id="btn-play" onclick="playCurrentMorse()" aria-label="Morse afspelen">
+        <span class="btn-play-icon" id="play-icon">🔊</span>
+        <span>Speel morse</span>
+      </button>
+    </div>
+
+    <div class="choices-grid" id="g-choices" role="group" aria-label="Antwoordopties"></div>
+
+  </div>
+
+  <!-- ─── SEND MODE ─── -->
+  <div id="mode-send" class="hidden">
+
+    <div class="char-stage">
+      <div class="stage-instruction">Stuur deze letter in morse:</div>
+      <div class="big-letter" id="g-send-letter" aria-live="polite">K</div>
+      <div class="morse-display" id="g-send-morse-hint" aria-hidden="true"></div>
+    </div>
+
+    <div class="send-zone">
+      <div class="send-current-morse" id="g-sent-so-far" aria-live="polite" aria-label="Gestuurde morse"></div>
+      <div class="send-button-outer">
+        <div class="send-btn-ring"></div>
+        <div id="send-btn" role="button" tabindex="0"
+             aria-label="Morse toets: tik kort voor dot, houd vast voor dash">
+          <div class="send-btn-label">TIK / HOUD</div>
+          <div class="dot-timer-bar">
+            <div class="dot-timer-fill" id="timer-fill"></div>
+          </div>
+          <div class="send-btn-hint">kort=· &nbsp; lang=—</div>
+        </div>
+      </div>
+      <div class="send-hint" id="g-send-hint">Tik kort voor · of houd vast voor —</div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: STREAM MODE
+════════════════════════════════════ -->
+<section class="screen" id="screen-stream" aria-label="Stream Missie">
+
+  <div class="stream-topbar">
+    <button class="btn-back" onclick="exitStream()" aria-label="Stream verlaten">←</button>
+    <div class="stream-badge" id="stream-badge">⚡ STREAM</div>
+    <div class="stream-score">
+      <span id="stream-score-val">0/5</span>
+    </div>
+  </div>
+
+  <!-- Letter slots (filled as player progresses) -->
+  <div class="stream-slots" id="stream-slots" aria-label="Sequence slots"></div>
+
+  <!-- Playing stage -->
+  <div class="stream-stage">
+    <div id="stream-stage-inner">
+      <!-- Countdown -->
+      <div class="stream-countdown" id="stream-countdown">3</div>
+      <!-- Morse visual during playback -->
+      <div class="morse-display" id="stream-morse-visual" aria-hidden="true"></div>
+      <!-- Timer bar for answering -->
+      <div class="stream-timer-wrap">
+        <div class="stream-timer-bar" id="stream-timer-bar"></div>
+      </div>
+    </div>
+
+    <!-- Result (shown after sequence done) -->
+    <div class="stream-result" id="stream-result" aria-live="polite">
+      <div class="stream-result-score" id="stream-res-score">5/5</div>
+      <div class="stream-result-label" id="stream-res-label">⚡ Perfecte Kopie!</div>
+      <div class="stream-result-sub" id="stream-res-sub"></div>
+    </div>
+  </div>
+
+  <!-- Choice buttons (appear after each letter plays) -->
+  <div class="stream-choices" id="stream-choices" role="group" aria-label="Stream antwoordopties"></div>
+
+  <!-- After-sequence action buttons (shown after streamFinished) -->
+  <div id="stream-actions" style="display:none; width:100%; flex-direction:column; gap:10px; margin-top:12px;">
+    <button class="btn-primary" onclick="startStream(Game.levelNum, Game.stream.fromResult)">↺ Opnieuw proberen</button>
+    <button class="btn-secondary" onclick="exitStream()">← Terug</button>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: RESULT
+════════════════════════════════════ -->
+<section class="screen" id="screen-result" aria-label="Missie Resultaat">
+
+  <div class="result-emoji" id="r-emoji">🎯</div>
+  <div class="result-stars" id="r-stars">⭐⭐</div>
+  <h2 class="result-title" id="r-title">Missie Geslaagd!</h2>
+  <div class="result-score-big" id="r-score">85%</div>
+  <div class="result-score-sub" id="r-sub">8 van 10 correct</div>
+
+  <!-- New letter unlock banner -->
+  <div class="result-unlock" id="r-unlock" style="display:none">
+    <small>🔓 NIEUWE LETTER ONTGRENDELD</small>
+    <span class="new-letter" id="r-new-letter">U</span>
+    <span class="new-morse" id="r-new-morse"></span>
+  </div>
+
+  <div class="result-actions">
+    <button class="btn-stream-bonus" id="btn-stream-bonus" style="display:none">
+      ⚡ Stream Bonus — 5 Letters in Real-time!
+    </button>
+    <button class="btn-primary" id="btn-next-level" onclick="goNextLevel()" style="display:none">
+      Volgende missie →
+    </button>
+    <button class="btn-secondary" onclick="replayLevel()">↺ Opnieuw proberen</button>
+    <button class="btn-ghost" onclick="showScreen('screen-levels')">🗺️ Missie kaart</button>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════
+     SCREEN: PROFILE
+════════════════════════════════════ -->
+<section class="screen" id="screen-profile" aria-label="Agent Dossier">
+
+  <div class="screen-header">
+    <button class="btn-back" onclick="showScreen('screen-home')" aria-label="Terug">←</button>
+    <h2 class="screen-title">🕵️ Agent Dossier</h2>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-avatar" aria-hidden="true">🕵️</div>
+    <div class="profile-info">
+      <div class="profile-name" id="p-name">Agent X</div>
+      <div class="profile-rank-tag" id="p-rank-tag">Rookie Agent</div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <strong id="p-level">1</strong>Level
+        </div>
+        <div class="profile-stat">
+          <strong id="p-sessions">0</strong>Missies
+        </div>
+        <div class="profile-stat">
+          <strong id="p-streak">0</strong>🔥 Streak
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Letter Collectie (Koch-volgorde)</div>
+  <div class="collection-grid" id="p-collection" aria-label="Beheerste letters"></div>
+
+  <button class="btn-ghost" style="max-width:280px; margin-top:8px" onclick="resetProgress()">
+    🗑️ Voortgang wissen
+  </button>
+
+</section>
+
+<!-- ─── NAV DOCK ──────────────────────── -->
+<nav id="nav-dock" aria-label="Navigatie">
+  <button class="nav-item active" id="nav-home"
+          onclick="navTo('screen-home','nav-home')">
+    <span class="nav-icon" aria-hidden="true">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" id="nav-levels"
+          onclick="navTo('screen-levels','nav-levels')">
+    <span class="nav-icon" aria-hidden="true">🗺️</span>
+    <span>Missies</span>
+  </button>
+  <button class="nav-item" id="nav-profile"
+          onclick="navTo('screen-profile','nav-profile')">
+    <span class="nav-icon" aria-hidden="true">🕵️</span>
+    <span>Dossier</span>
+  </button>
+</nav>
+
+<!-- ─── SCRIPTS (in order) ───────────── -->
+<script src="js/morse.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
