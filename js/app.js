@@ -179,6 +179,13 @@ function updateHomeUI(){
   const rank=getRankForLevel(Profile.currentLevel);
   document.getElementById('home-rank').textContent=rank.emoji+' '+rank.name;
   document.getElementById('home-rank').style.color=rank.color;
+
+  // Briefing button — show when enough words available
+  const btnBriefing=document.getElementById('btn-briefing');
+  if(btnBriefing){
+    const avail=canPlayBriefing();
+    btnBriefing.style.display=avail?'block':'none';
+  }
 }
 
 /* ─── LEVEL SELECT ───────────────────────────── */
