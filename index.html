@@ -17,7 +17,7 @@
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="streak-banner" aria-live="polite"></div>
 
-<!-- ════════════ PROFILES SCREEN ════════════ -->
+<!-- ════════ PROFILES ════════ -->
 <section class="screen" id="screen-profiles">
   <div style="text-align:center;margin-top:20px">
     <div style="font-size:3rem">🕵️</div>
@@ -28,7 +28,7 @@
   <div id="profiles-new-form">
     <div class="new-form-title">🔑 Nieuw Agent-profiel</div>
     <div class="avatar-picker" id="avatar-picker"></div>
-    <input type="text" class="name-input" id="new-profile-name" placeholder="Jouw naam..." maxlength="14" autocomplete="off">
+    <input type="text" class="name-input" id="new-profile-name" placeholder="Jouw naam…" maxlength="14" autocomplete="off">
     <div class="new-form-btns">
       <button class="btn-primary" onclick="createNewProfile()">Aanmaken →</button>
       <button class="btn-ghost" onclick="document.getElementById('profiles-new-form').style.display='none'">Annuleer</button>
@@ -36,19 +36,19 @@
   </div>
 </section>
 
-<!-- ════════════ ONBOARDING ════════════════ -->
+<!-- ════════ ONBOARDING ════════ -->
 <section class="screen" id="screen-onboard">
   <div class="ob-step active" id="ob-0">
     <div class="ob-big">🕵️</div>
     <h1 class="ob-title">Welkom, Agent!</h1>
-    <p class="ob-body">Jij staat op het punt de <strong style="color:var(--teal)">geheimste taal ter wereld</strong> te leren. Spionnen, zeehelden en astronauten gebruiken hem.<br><br>Klaar voor je eerste missie?</p>
+    <p class="ob-body">Jij staat op het punt de <strong style="color:var(--teal)">geheimste taal ter wereld</strong> te leren. Spionnen, zeehelden en astronauten gebruiken hem. Klaar?</p>
     <div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
     <button class="btn-primary" onclick="nextOnboard()">Ik ben klaar! →</button>
   </div>
   <div class="ob-step" id="ob-1">
     <div class="ob-big">· —</div>
     <h2 class="ob-title">Twee tekens. Eindeloos geheim.</h2>
-    <p class="ob-body">Morse bestaat uit maar <strong style="color:var(--teal)">twee dingen</strong>: een kort tikje (DOT ·) en een lang (DASH —). Elke letter is een unieke combinatie. Zo simpel!</p>
+    <p class="ob-body">Morse bestaat uit maar <strong style="color:var(--teal)">twee dingen</strong>: een kort tikje (DOT ·) en een lang (DASH —). Elke letter is een unieke combinatie.</p>
     <div class="ob-demo">
       <div class="ob-demo-item"><div class="ob-demo-sym" style="color:var(--teal)">·</div><div class="ob-demo-desc">Kort = DOT</div></div>
       <div class="ob-sep">vs</div>
@@ -58,13 +58,13 @@
     <button class="btn-primary" onclick="nextOnboard()">Begrepen! →</button>
   </div>
   <div class="ob-step" id="ob-2">
-    <div class="ob-big">👂📡⚡</div>
-    <h2 class="ob-title">Drie missietypes</h2>
+    <div class="ob-big">👂👂⚡</div>
+    <h2 class="ob-title">Vier oefentypes</h2>
     <p class="ob-body">
-      <strong style="color:var(--teal)">🎓 LEER</strong> — Hoor de letter + mnemonisch geheugensteuntje.<br><br>
-      <strong style="color:var(--teal)">👂 LUISTER</strong> — Hoor morse → kies de juiste letter.<br><br>
-      <strong style="color:var(--orange)">📡 STUUR</strong> — Tik zelf de morse op de knop.<br><br>
-      <strong style="color:var(--purple)">⚡ STREAM</strong> — 5 letters in real-time kopiëren!
+      <strong style="color:var(--teal)">🎓 LEER</strong> — Nieuwe letter horen + klankgeheugen.<br><br>
+      <strong style="color:var(--teal)">👂 LUISTER</strong> — Hoor morse → kies de letter.<br><br>
+      <strong style="color:var(--purple)">👂👂 REEKS</strong> — Twee letters achter elkaar horen!<br><br>
+      <strong style="color:var(--yellow)">🔐 BRIEFING</strong> — Hele woorden in morse begrijpen!
     </p>
     <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
     <button class="btn-primary" onclick="nextOnboard()">Oké! →</button>
@@ -72,14 +72,14 @@
   <div class="ob-step" id="ob-3">
     <div class="ob-big">🔑</div>
     <h2 class="ob-title">Jouw codenaam</h2>
-    <p class="ob-body">Elke agent heeft een geheime naam. Wat is die van jou?</p>
+    <p class="ob-body">Elke agent heeft een geheime naam.</p>
     <input type="text" class="name-input" id="agent-name-input" placeholder="Bijv: Vosje, Storm, Rex…" maxlength="14" autocomplete="off" spellcheck="false">
     <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div>
     <button class="btn-primary" onclick="finishOnboard()">Missie starten! 🚀</button>
   </div>
 </section>
 
-<!-- ════════════ HOME ═══════════════════════ -->
+<!-- ════════ HOME ════════ -->
 <section class="screen active" id="screen-home">
   <div class="logo-area">
     <div class="logo-morse" aria-hidden="true">· — &nbsp; · · · &nbsp; — — — &nbsp; · &nbsp; · — — —</div>
@@ -94,13 +94,11 @@
         <circle cx="45" cy="45" r="31" fill="#00dfc4"/>
         <ellipse cx="35" cy="41" rx="5" ry="6.5" fill="#060b1c"/>
         <ellipse cx="55" cy="41" rx="5" ry="6.5" fill="#060b1c"/>
-        <circle cx="37" cy="39" r="2.2" fill="white"/>
-        <circle cx="57" cy="39" r="2.2" fill="white"/>
+        <circle cx="37" cy="39" r="2.2" fill="white"/><circle cx="57" cy="39" r="2.2" fill="white"/>
         <path d="M35 56 Q45 64 55 56" stroke="#060b1c" stroke-width="2.8" stroke-linecap="round" fill="none"/>
         <line x1="45" y1="14" x2="45" y2="4" stroke="#00dfc4" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="45" cy="3" r="3.5" fill="#ffe44f"/>
-        <circle cx="28" cy="50" r="5" fill="#00b89a" opacity=".4"/>
-        <circle cx="62" cy="50" r="5" fill="#00b89a" opacity=".4"/>
+        <circle cx="28" cy="50" r="5" fill="#00b89a" opacity=".4"/><circle cx="62" cy="50" r="5" fill="#00b89a" opacity=".4"/>
       </svg>
     </div>
     <div class="char-sep">&amp;</div>
@@ -112,8 +110,7 @@
         <rect x="17" y="38" width="24" height="16" rx="6" fill="#060b1c"/>
         <rect x="49" y="38" width="24" height="16" rx="6" fill="#060b1c"/>
         <line x1="41" y1="46" x2="49" y2="46" stroke="#060b1c" stroke-width="3"/>
-        <circle cx="24" cy="44" r="3" fill="white" opacity=".35"/>
-        <circle cx="56" cy="44" r="3" fill="white" opacity=".35"/>
+        <circle cx="24" cy="44" r="3" fill="white" opacity=".35"/><circle cx="56" cy="44" r="3" fill="white" opacity=".35"/>
         <path d="M29 58 Q45 67 61 58" stroke="#060b1c" stroke-width="2.8" stroke-linecap="round" fill="none"/>
         <rect x="3" y="36" width="9" height="8" rx="3" fill="#ff7c2a"/>
         <rect x="78" y="36" width="9" height="8" rx="3" fill="#ff7c2a"/>
@@ -135,24 +132,29 @@
   <p class="tagline">"Word de Agent die niemand verwacht." 🕵️</p>
   <div class="home-actions">
     <button class="btn-primary" onclick="showScreen('screen-levels')">▶ Missies starten</button>
+    <!-- Geheime Briefing — verschijnt zodra genoeg woorden beschikbaar -->
+    <button class="btn-briefing" id="btn-briefing" style="display:none" onclick="startBriefing()">
+      🔐 Geheime Briefing — Woorden in Morse!
+    </button>
     <button class="btn-secondary" onclick="showScreen('screen-profile')">📋 Mijn Agent-dossier</button>
     <button class="btn-ghost" onclick="switchProfile()">🔄 Wissel profiel</button>
   </div>
 </section>
 
-<!-- ════════════ LEVEL SELECT ══════════════ -->
+<!-- ════════ LEVEL SELECT ════════ -->
 <section class="screen" id="screen-levels">
   <div class="screen-header">
     <button class="btn-back" onclick="showScreen('screen-home')">←</button>
     <h2 class="screen-title">🗺️ Missie Kaart</h2>
   </div>
   <div class="levels-intro">
-    <strong>Koch-methode:</strong> Elke niveau begint met een <strong>🎓 LEER-fase</strong> — hoor de letter meerdere keren voor je begint! Score ≥ drempel om te ontgrendelen. ⚡ STREAM = real-time reekstest.
+    <strong>Koch-methode:</strong> Begin met <strong>🎓 Leer</strong>, bouw op naar <strong>👂👂 Reeks</strong>.
+    Score ≥ drempel om te ontgrendelen. ⚡ STREAM = real-time reekstest.
   </div>
   <div id="levels-container" style="width:100%;display:flex;flex-direction:column;gap:0;"></div>
 </section>
 
-<!-- ════════════ LEARN SCREEN ══════════════ -->
+<!-- ════════ LEARN SCREEN ════════ -->
 <section class="screen" id="screen-learn">
   <div class="learn-topbar">
     <button class="btn-back" onclick="exitLearn()">←</button>
@@ -164,29 +166,23 @@
     <div class="learn-plays-left" id="learn-plays-left">Luisteren…</div>
     <button class="btn-secondary" style="max-width:240px" onclick="learnPlayAgain()">🔊 Nog een keer horen</button>
   </div>
-  <div class="learn-tap-hint" id="learn-tap-hint">💡 Tik mee met de knop hieronder terwijl je luistert!</div>
   <div class="learn-tip">
-    💡 <strong>Tip:</strong> Luister niet naar de afzonderlijke tikjes — hoor het als één geluid, zoals je een naam hoort!
+    💡 <strong>Het geheim:</strong> Het ritme van het woord IS de morse! Zeg het hardop mee — je hersenen leren zo het klankpatroon!
   </div>
   <button class="btn-primary" id="learn-start-btn" style="display:none" onclick="learnStartQuiz()">
     ✅ Ik ken hem! Start oefening →
   </button>
 </section>
 
-<!-- ════════════ GAME SCREEN ═══════════════ -->
+<!-- ════════ GAME SCREEN ════════ -->
 <section class="screen" id="screen-game">
   <div class="game-topbar">
     <button class="btn-back" onclick="exitGame()">←</button>
     <div class="game-level-badge" id="g-level-badge">LEVEL 1</div>
     <div class="game-mission-type" id="g-mission-type">👂 LUISTER</div>
-    <div class="game-score">
-      <span id="g-correct">0</span>/<span id="g-total">10</span>
-      <span id="g-streak"></span>
-    </div>
+    <div class="game-score"><span id="g-correct">0</span>/<span id="g-total">10</span><span id="g-streak"></span></div>
   </div>
   <div class="progress-wrap"><div class="progress-bar" id="g-progress" style="width:0%"></div></div>
-
-  <!-- Feedback bar (floats between stage and choices) -->
   <div id="g-feedback-bar" aria-live="polite"></div>
 
   <!-- DECODE MODE -->
@@ -199,37 +195,30 @@
         <span>Speel morse</span>
       </button>
     </div>
-    <!-- Mascot hint -->
-    <div class="game-mascot" style="margin:4px 0">
-      <span class="mascot-mini">🕵️</span>
-      <span id="mascot-tip" style="font-size:.78rem;color:var(--muted)">Luister goed en kies de juiste letter!</span>
-    </div>
+    <div id="g-mnemonic-hint" aria-live="polite"></div>
     <div class="choices-grid" id="g-choices"></div>
   </div>
 
-  <!-- SEND MODE -->
-  <div id="mode-send" class="hidden">
-    <div class="char-stage">
-      <div class="stage-instruction">Stuur deze letter in morse:</div>
-      <div class="big-letter" id="g-send-letter">K</div>
-      <div class="morse-display" id="g-send-morse-hint" aria-hidden="true"></div>
+  <!-- REEKS MODE -->
+  <div id="mode-reeks" class="hidden">
+    <div class="char-stage" style="min-height:120px">
+      <div class="stage-instruction">Hoor BEIDE letters — klik ze in volgorde</div>
+      <div class="morse-display" id="reeks-morse-visual" aria-hidden="true"></div>
     </div>
-    <div class="send-zone">
-      <div class="send-current-morse" id="g-sent-so-far"></div>
-      <div class="send-button-outer">
-        <div class="send-btn-ring"></div>
-        <div id="send-btn" role="button" tabindex="0">
-          <div class="send-btn-label">TIK / HOUD</div>
-          <div class="dot-timer-bar"><div class="dot-timer-fill" id="timer-fill"></div></div>
-          <div class="send-btn-hint">kort=· &nbsp; lang=—</div>
-        </div>
-      </div>
-      <div class="send-hint" id="g-send-hint">Tik kort · of houd lang —</div>
+    <div class="reeks-slots-row">
+      <div class="reeks-slot" id="reeks-slot-0">?</div>
+      <div style="font-size:1.5rem;color:var(--muted);align-self:center;">→</div>
+      <div class="reeks-slot" id="reeks-slot-1">?</div>
     </div>
+    <div class="reeks-status" id="reeks-status">🔊 Luister…</div>
+    <button class="btn-reeks-replay" id="btn-reeks-play" onclick="replayReeksPair()">
+      🔊 Opnieuw horen
+    </button>
+    <div class="choices-grid" id="reeks-choices"></div>
   </div>
 </section>
 
-<!-- ════════════ STREAM SCREEN ══════════════ -->
+<!-- ════════ STREAM SCREEN ════════ -->
 <section class="screen" id="screen-stream">
   <div class="stream-topbar">
     <button class="btn-back" onclick="exitStream()">←</button>
@@ -251,12 +240,63 @@
   </div>
   <div class="stream-choices" id="stream-choices"></div>
   <div id="stream-actions" style="display:none;width:100%;flex-direction:column;gap:10px;margin-top:10px;">
-    <button class="btn-primary" onclick="startStream(Game.levelNum,Game.stream.fromResult)">↺ Opnieuw proberen</button>
+    <button class="btn-primary" onclick="startStream(Game.levelNum,Game.stream.fromResult)">↺ Opnieuw</button>
     <button class="btn-secondary" onclick="exitStream()">← Terug</button>
   </div>
 </section>
 
-<!-- ════════════ RESULT SCREEN ══════════════ -->
+<!-- ════════ GEHEIME BRIEFING ════════ -->
+<section class="screen" id="screen-briefing">
+  <div class="briefing-topbar">
+    <button class="btn-back" onclick="exitBriefing()">←</button>
+    <div class="briefing-badge">🔐 GEHEIME BRIEFING</div>
+    <div style="font-family:var(--font-mono);font-size:.88rem;color:var(--yellow);font-weight:700"
+         id="br-word-counter">1/5</div>
+  </div>
+
+  <!-- Word progress dots -->
+  <div class="br-progress-dots">
+    <div class="br-word-dot active"></div>
+    <div class="br-word-dot"></div>
+    <div class="br-word-dot"></div>
+    <div class="br-word-dot"></div>
+    <div class="br-word-dot"></div>
+  </div>
+
+  <!-- Stage: active during briefing -->
+  <div class="br-stage" id="br-stage">
+    <div class="br-word-label" id="br-word-label">🔊 Luister naar het woord…</div>
+
+    <!-- Letter tiles -->
+    <div class="br-tiles" id="br-tiles"></div>
+
+    <!-- Morse playback stage -->
+    <div class="br-morse-stage">
+      <div class="morse-display" id="br-morse-visual" aria-hidden="true"></div>
+    </div>
+
+    <button class="btn-br-replay" id="btn-br-replay" onclick="briefingReplayWord()" disabled>
+      🔊 Herhaal deze letter
+    </button>
+
+    <div class="choices-grid" id="br-choices"></div>
+  </div>
+
+  <!-- Result: shown after all 5 words -->
+  <div class="br-result" id="br-result">
+    <div style="font-size:3rem">🔐</div>
+    <div class="br-result-score" id="br-result-score">5/5</div>
+    <div class="br-result-label" id="br-result-label">🏆 Perfecte Briefing!</div>
+    <div class="br-result-sub" id="br-result-sub"></div>
+    <div class="br-result-words" id="br-result-words"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;margin-top:8px">
+      <button class="btn-briefing" onclick="briefingPlayAgain()">↺ Nieuwe briefing</button>
+      <button class="btn-secondary" onclick="exitBriefing()">← Terug</button>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ RESULT SCREEN ════════ -->
 <section class="screen" id="screen-result">
   <div class="result-emoji" id="r-emoji">🎯</div>
   <div class="result-stars" id="r-stars">⭐⭐</div>
@@ -276,7 +316,7 @@
   </div>
 </section>
 
-<!-- ════════════ PROFILE SCREEN ════════════ -->
+<!-- ════════ PROFILE SCREEN ════════ -->
 <section class="screen" id="screen-profile">
   <div class="screen-header">
     <button class="btn-back" onclick="showScreen('screen-home')">←</button>
@@ -296,7 +336,7 @@
   </div>
   <div class="section-label">⚡ Snelste reacties</div>
   <div class="speed-records-row" id="p-speed-records"></div>
-  <div class="section-label">Letter Collectie (Koch-volgorde)</div>
+  <div class="section-label">Letter Collectie</div>
   <div class="collection-grid" id="p-collection"></div>
   <button class="btn-ghost" style="max-width:240px;margin-top:8px" onclick="resetProgress()">🗑️ Voortgang wissen</button>
   <button class="btn-ghost" style="max-width:240px;margin-top:4px" onclick="switchProfile()">🔄 Wissel profiel</button>
